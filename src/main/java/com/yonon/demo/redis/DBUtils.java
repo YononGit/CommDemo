@@ -67,14 +67,14 @@ public class DBUtils {
 					user.setPhoneNo(phoneNo);
 					user.setUsername(username);
 
-					RedisUtils.setRedisData(user);
+//					RedisUtils.setRedisData(user);
 					System.out.println("查询到的记录为：" + id + "," + username + "," + age + "," + address + "," + phoneNo);
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		} else {
-			RedisUtils.getRedisData();
+//			RedisUtils.getRedisData();
 		}
 		System.out.println("用时：" + (System.currentTimeMillis() - timeBefore));
 		return user;
