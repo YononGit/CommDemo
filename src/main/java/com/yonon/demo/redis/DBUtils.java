@@ -1,12 +1,11 @@
 package com.yonon.demo.redis;
 
 import com.yonon.demo.domain.DBRedisUser;
+import com.yonon.demo.factory.StudentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
-import java.text.*;
-import java.util.Calendar;
 
 /**
  * @author JiangYinghan 2017年1月4日
@@ -29,7 +28,7 @@ public class DBUtils {
                 long endTime = System.currentTimeMillis();
                 if (null != conn) {
                     logger.info("获取数据库连接成功,耗时:{}ms", String.valueOf(endTime - startTime));
-                }else{
+                } else {
                     logger.info("获取数据库连接失败,耗时:{}ms", String.valueOf(endTime - startTime));
                 }
             } else {
@@ -81,23 +80,23 @@ public class DBUtils {
     }
 
     // cap_repayment_detail_sync 批量插入数据
-    public static void insertBatch(int count) throws SQLException {
-        String[] status = {"B00", "C00", "A00", "S00", "S01", "S02", "A01"};
-        String[] capitals = {"BSB", "BEE", "CRB"};
-        int[] periods = {3, 6, 12};
+//    public static void insertBatch(int count) throws SQLException {
+//        String[] status = {"B00", "C00", "A00", "S00", "S01", "S02", "A01"};
+//        String[] capitals = {"BSB", "BEE", "CRB"};
+//        int[] periods = {3, 6, 12};
+//
+//        for (int row = 0; row <= count; row++) {
+//            int totalPeriod = periods[row % periods.length];
+//            String loanId = generateSequenceNo();
+//            for (int i = 1; i <= totalPeriod; i++) {
+//                String sql = "INSERT INTO cap_repayment_detail_sync (ID,CAPITAL_CODE,LOAN_ID,TOTAL_PERIOD,PERIOD,STATUS)VALUES('" + generateSequenceNo() + "', '" + capitals[i % capitals.length] + "','" + loanId + "','" + totalPeriod + "','" + i + "','" + status[i % status.length] + "')";
+//                PreparedStatement pstmt = getConnect().prepareStatement(sql);
+//                System.out.println("insert status:" + pstmt.execute());
+//            }
+//        }
+//    }
 
-        for (int row = 0; row <= count; row++) {
-            int totalPeriod = periods[row % periods.length];
-            String loanId = generateSequenceNo();
-            for (int i = 1; i <= totalPeriod; i++) {
-                String sql = "INSERT INTO cap_repayment_detail_sync (ID,CAPITAL_CODE,LOAN_ID,TOTAL_PERIOD,PERIOD,STATUS)VALUES('" + generateSequenceNo() + "', '" + capitals[i % capitals.length] + "','" + loanId + "','" + totalPeriod + "','" + i + "','" + status[i % status.length] + "')";
-                PreparedStatement pstmt = getConnect().prepareStatement(sql);
-                System.out.println("insert status:" + pstmt.execute());
-            }
-        }
-    }
-
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) {
         // System.out.println(getConnect().toString());
         // try {
         // Thread.sleep(2000);
@@ -110,48 +109,46 @@ public class DBUtils {
         // generateSequenceNo();
         // }
 
-        insertBatch(999999);
+//        insertBatch(999999);
+//        for (int i = 0; i < 1000; i++) {
+//            logger.info(StudentFactory.genRandName());
+//        }
+        try {
+            insertStdns(500000);
+        } catch (Exception ex) {
+            logger.info("insert ex:", ex);
+        }
     }
 
-    /**
-     * The FieldPosition.
-     */
-    private static final FieldPosition HELPER_POSITION = new FieldPosition(0);
 
-    /**
-     * This Format for format the data to special format.
-     */
-    private final static Format dateFormat = new SimpleDateFormat("MMddHHmmssS");
-
-    /**
-     * This Format for format the number to special format.
-     */
-    private final static NumberFormat numberFormat = new DecimalFormat("0000");
-
-    /**
-     * This int is the sequence number ,the default value is 0.
-     */
-    private static int seq = 0;
-
-    private static final int MAX = 9999;
-
-    public static String generateSequenceNo() {
-
-        Calendar rightNow = Calendar.getInstance();
-
-        StringBuffer sb = new StringBuffer();
-
-        dateFormat.format(rightNow.getTime(), sb, HELPER_POSITION);
-
-        numberFormat.format(seq, sb, HELPER_POSITION);
-
-        if (seq == MAX) {
-            seq = 0;
-        } else {
-            seq++;
+    //
+    public static void insertStdns(int index) throws Exception {
+        for (int i = 0; i < index; i++) {
+            String id;
+            String name;
+            String sex;
+            int age;
+            String dept;
+            id = StudentFactory.generateSequenceNo();
+            name = StudentFactory.genRandName();
+            sex = StudentFactory.getSex(i);
+            age = (i + 1) % 50 + 30;
+            dept = "auto-user-info[" + id + "," + name + "," + sex + "," + age + "]";
+            logger.info("auto-create user complete!");
+            logger.info("user-id:{},name:{},sex:{},age:{},dept:{}", id, name, sex, age, dept);
+            String sql = "INSERT INTO student(Sno,Sname,Ssex,Sage,Sdept)values('" + id + "','" + name + "','" + sex + "','" + age + "','" + dept + "'" + ")";
+            logger.info("ready sql-->{}", sql);
+            PreparedStatement pstmt = getConnect().prepareStatement(sql);
+            pstmt.execute();
+            logger.info("save data successful ! process--> {}", StudentFactory.process(index, i + 1));
+           // threadInsert(i + 1);
         }
+    }
 
-        System.out.println("id:" + sb.toString());
-        return sb.toString();
+    public static void threadInsert(int index) throws Exception {
+        logger.info("insert start to sleep");
+        if (index % 20000 == 0)
+            Thread.sleep(1000);
+        logger.info("insert start to work");
     }
 }
