@@ -14,14 +14,14 @@ public class TransferFileToMongoDB {
     public static void main(String[] args) {
         TransferFileToMongoDB transferFileToMongoDB = new TransferFileToMongoDB();
 //        transferFileToMongoDB.deleteDocument("book");
-//        transferFileToMongoDB.getFileStream();
-        transferFileToMongoDB.printDocument("book");
+        transferFileToMongoDB.getFileStream();
+//        transferFileToMongoDB.printDocument("student");
     }
 
 
     public void getFileStream() {
         try {
-            String fileName = "D:/mongoDB.txt";
+            String fileName = "D:/book.txt";
             File localFile = new File(fileName);
             BufferedReader bufferedReader = new BufferedReader(new FileReader(localFile));
             String line;
@@ -33,7 +33,7 @@ public class TransferFileToMongoDB {
             System.out.println(localFile.getName() + " is loaded...");
 //            writeFile("D:/newFile.txt",content.toString());
             //文档写入
-            MongoUtils.getInstance().writeDocument("book","steal shadow",content.toString());
+            MongoUtils.getInstance().writeDocument("student","student",content.toString());
             bufferedReader.close();
         } catch (Exception ex) {
             ex.printStackTrace();

@@ -23,10 +23,13 @@ public class MongoUtils {
 
     public static MongoUtils getInstance() {
         if (null == instance) {
+            System.out.println("获取新的连接");
             mongoClient = getClient();
             return new MongoUtils();
-        } else
+        } else {
+            System.out.println("已存在的连接");
             return instance;
+        }
     }
 
     private static MongoClient getClient() {
@@ -36,8 +39,9 @@ public class MongoUtils {
     }
 
 
-    public void writeDocument(String collectionName, String documentName, String content) {
+    public static void writeDocument(String collectionName, String documentName, String content) {
         try {
+            getInstance();
             MongoCollection<Document> collection = getCollection(collectionName);
             //插入文档
             /**
@@ -52,6 +56,7 @@ public class MongoUtils {
             List<Document> documents = new ArrayList<Document>();
             documents.add(document);
             collection.insertMany(documents);
+
             System.out.println("文档" + documentName + "插入成功");
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
@@ -65,6 +70,7 @@ public class MongoUtils {
     }
 
     public String printDocument(String collectionName) {
+        getInstance();
         StringBuffer content = new StringBuffer();
         MongoCollection<Document> collection = getCollection(collectionName);
         //检索所有文档
@@ -72,6 +78,7 @@ public class MongoUtils {
          * 1. 获取迭代器FindIterable<Document>
          * 2. 获取游标MongoCursor<Document>
          * 3. 通过游标遍历检索出的文档集合
+         *
          * */
         FindIterable<Document> findIterable = collection.find();
         MongoCursor<Document> mongoCursor = findIterable.iterator();
@@ -82,8 +89,9 @@ public class MongoUtils {
         }
         return content.toString();
     }
-    public void deleteDocument(String collectionName){
+
+    public void deleteDocument(String collectionName) {
         MongoCollection<Document> collection = getCollection(collectionName);
-        collection.deleteMany (Filters.eq("likes", 100));
+        collection.deleteMany(Filters.eq("likes", 100));
     }
 }

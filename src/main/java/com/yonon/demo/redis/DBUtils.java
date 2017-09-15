@@ -1,11 +1,13 @@
 package com.yonon.demo.redis;
 
 import com.yonon.demo.domain.DBRedisUser;
+import com.yonon.demo.domain.Student;
 import com.yonon.demo.factory.StudentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 /**
  * @author JiangYinghan 2017年1月4日
@@ -141,7 +143,7 @@ public class DBUtils {
             PreparedStatement pstmt = getConnect().prepareStatement(sql);
             pstmt.execute();
             logger.info("save data successful ! process--> {}", StudentFactory.process(index, i + 1));
-           // threadInsert(i + 1);
+            // threadInsert(i + 1);
         }
     }
 
@@ -151,4 +153,48 @@ public class DBUtils {
             Thread.sleep(1000);
         logger.info("insert start to work");
     }
+
+    public static ArrayList<Student> queryBySql(String sql) {
+        ArrayList<Student> studentList = new ArrayList();
+        long timeBefore = System.currentTimeMillis();
+        try {
+            PreparedStatement pstmt = getConnect().prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                String id;
+                String name;
+                String sex;
+                int age;
+                String dept;
+                id = rs.getString(1);
+                name = rs.getString(2);
+                sex = rs.getString(3);
+                age = rs.getInt(4);
+                dept = rs.getString(5);
+                Student student = new Student(id, name, sex, age, dept);
+                studentList.add(student);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        System.out.println("queryBySql用时：" + (System.currentTimeMillis() - timeBefore) + "ms");
+        return studentList;
+    }
+
+    public static int queryCount(String sql) {
+        long timeBefore = System.currentTimeMillis();
+        int count = 0;
+        try {
+            PreparedStatement pstmt = getConnect().prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                count = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        System.out.println("queryCount用时：" + (System.currentTimeMillis() - timeBefore) + "ms");
+        return count;
+    }
+
 }

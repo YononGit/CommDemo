@@ -1,5 +1,9 @@
 package com.yonon.demo.redis;
 
+import com.yonon.demo.domain.Student;
+import com.yonon.demo.util.SerializableUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 
 /**
@@ -8,6 +12,7 @@ import redis.clients.jedis.Jedis;
 public class RedisUtils {
 
     private static Jedis jedis;
+    private static final Logger logger = LoggerFactory.getLogger(RedisUtils.class);
 
     public static synchronized Jedis getConnect() {
         if (jedis == null) {
@@ -78,4 +83,18 @@ public class RedisUtils {
         System.out.println("get value:" + value);
         return value;
     }
+
+    public static void setStudentObject(Student student, String uniqueStmp, int index) {
+        getConnect();
+        logger.info("add to redis start,id:{}", student.getId());
+        jedis.set(uniqueStmp.concat(String.valueOf(index)).getBytes(), SerializableUtils.serialize(student));
+        logger.info("add to redis finish,id:{}", student.getId());
+    }
+
+    public static Student getStudentObject(String uniqueStmp, int index) {
+        getConnect();
+        byte[] person = jedis.get(uniqueStmp.concat(String.valueOf(index)).getBytes());
+        return (Student) SerializableUtils.unserialize(person);
+    }
+
 }
