@@ -1,54 +1,21 @@
 package com.yonon.demo.excel;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.util.StringUtils;
-
-import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * Created by jr-jiangyinghan on 2017-10-10.
- * <p>
+ *
  * 1-交易码需要在excel用[]括起
  * 2-分配比例需要加THIRD\QY\ALL修饰
  * 3-文件存放目录D:\\tmp\\
+ * 4-修改constant partnerCode
  */
 class TransactionUtils {
     private static Workbook wb = null;
-
-    public static void setPartnerCode(String partnerCode) {
-        TransactionUtils.partnerCode = partnerCode;
-    }
-
-   private  static String partnerCode = "013";
-
-    private Workbook getWorkbook(String file) {
-        try {
-            if (wb == null) {
-                System.out.println("获取wb对象");
-                InputStream inputStream = new FileInputStream(file);
-                if (file.endsWith("xls")) {
-                    wb = new HSSFWorkbook(inputStream); // 解析xls格式
-                } else if (file.endsWith("xlsx")) {
-                    wb = new XSSFWorkbook(inputStream); // 解析xlsx格式
-                }
-                return wb;
-            } else {
-                System.out.println("返回wb");
-                return wb;
-            }
-        }catch(Exception ex){
-            ex.printStackTrace();
-            return wb;
-        }
-    }
-
 
     /**
      * 交易栏目 需要添加[] 标志
@@ -56,9 +23,12 @@ class TransactionUtils {
     public void readBusConfigExcel(String file) throws Exception {
         Workbook wb;
         String sql = "";
-        String resultSql = "INSERT INTO business_config(business_no,trans_code,NAME,partner_code,product_code) VALUES\n";
+        String headSql = "-- 业务配置\n" +
+                "DELETE FROM business_config WHERE business_no LIKE 'b360JIETIAO_CASH" + Constant.partnerCode + "%';\n" +
+                "DELETE FROM business_config WHERE business_no LIKE 'b360JIETIAO_TERM" + Constant.partnerCode + "%';\n";
+        String resultSql = headSql.concat("INSERT INTO business_config(business_no,trans_code,NAME,partner_code,product_code) VALUES\n");
         try {
-            wb = getWorkbook(file);
+            wb = ExcelUtilsHelps.getWorkbook(file);
             for (int sheetNo = 0; sheetNo <= 1; sheetNo++) {
                 String produceCode = "";
                 if (sheetNo == 0) {
@@ -82,7 +52,7 @@ class TransactionUtils {
                         } else {
                             String transCode = getTransCodePrefix(cellStr);
                             String name = getNamePrefix(cellStr);
-                            sql += genBusConfigSql(transCode, name, produceCode, partnerCode).concat("\n");
+                            sql += genBusConfigSql(transCode, name, produceCode, Constant.partnerCode).concat("\n");
                             snapShot = cellStr;
                         }
                     } else {
@@ -90,7 +60,7 @@ class TransactionUtils {
                     }
                 }
                 if (sheetNo != 0) {
-                    resultSql = formatAndWriteSql(sql, resultSql, "01-busConfig");
+                    resultSql = ExcelUtilsHelps.formatAndWriteSql(sql, resultSql, "01-busConfig");
                     System.out.println(resultSql);
                 }
             }
@@ -99,18 +69,7 @@ class TransactionUtils {
         }
     }
 
-    private String formatAndWriteSql(String sql, String resultSql, String fileType) {
-        int sqlCharCount = sql.length();
-        sql = sql.substring(0, sqlCharCount - 2);
-        sql = sql.concat(";");
-        resultSql = resultSql.concat(sql);
-        try {
-            writeFile(resultSql, fileType);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return resultSql;
-    }
+
 
     private String getTransCodePrefix(String content) {
         int beginIndex = content.indexOf("[");
@@ -136,9 +95,12 @@ class TransactionUtils {
     public void readTransactionConfigExcel(String file) throws Exception {
         Workbook wb;
         String sql = "";
-        String resultSql = "INSERT INTO transaction_config(transation_no,business_no,fin_code,fin_name,TYPE,fee_code,own_rate,partner_rate,xd_rate,use_rate,date_effective,date_invalid) VALUES\n";
+        String headSql = "-- 交易配置\n" +
+                "DELETE FROM transaction_config WHERE transation_no LIKE '360JIETIAO_CASH" + Constant.partnerCode + "%';\n" +
+                "DELETE FROM transaction_config WHERE transation_no LIKE '360JIETIAO_TERM" + Constant.partnerCode + "%';\n";
+        String resultSql = headSql.concat("INSERT INTO transaction_config(transation_no,business_no,fin_code,fin_name,TYPE,fee_code,own_rate,partner_rate,xd_rate,use_rate,date_effective,date_invalid) VALUES\n");
         try {
-            wb = getWorkbook(file);
+            wb = ExcelUtilsHelps.getWorkbook(file);
             for (int sheetNo = 0; sheetNo < 2; sheetNo++) {
                 Sheet sheet = wb.getSheetAt(sheetNo); // 第一个工作表
                 String transactionNoPre = "";
@@ -166,13 +128,13 @@ class TransactionUtils {
                             continue;
                         }
                         if (!StringUtils.isEmpty(content)) {
-                            sql += genTransactionConfigSql(content, transCode, partnerCode, transactionNoPre);
+                            sql += genTransactionConfigSql(content, transCode, Constant.partnerCode, transactionNoPre);
                             sql = sql.concat("\n");
                         }
                     }
                 }
                 if (sheetNo != 0) {
-                    resultSql = formatAndWriteSql(sql, resultSql, "02-transactionConfig");
+                    resultSql = ExcelUtilsHelps.formatAndWriteSql(sql, resultSql, "02-transactionConfig");
                     System.out.println(resultSql);
                 }
             }
@@ -204,9 +166,12 @@ class TransactionUtils {
     public void readTransactionAccountExcel(String file) {
         Workbook wb;
         String sql = "";
-        String resultSql = "INSERT INTO transaction_account(transation_no,seq_no,account_code,summary_code,direction,amt_cal_type,is_default_account) VALUES\n";
+        String headSql = "-- 交易分录\n" +
+                "DELETE FROM transaction_account WHERE transation_no LIKE '360JIETIAO_CASH" + Constant.partnerCode + "%';\n" +
+                "DELETE FROM transaction_account WHERE transation_no LIKE '360JIETIAO_TERM" + Constant.partnerCode + "%';\n";
+        String resultSql = headSql.concat("INSERT INTO transaction_account(transation_no,seq_no,account_code,summary_code,direction,amt_cal_type,is_default_account) VALUES\n");
         try {
-            wb = getWorkbook(file);
+            wb = ExcelUtilsHelps.getWorkbook(file);
             for (int sheetNo = 0; sheetNo < 2; sheetNo++) {
                 Sheet sheet = wb.getSheetAt(sheetNo); // 第一个工作表
                 String transactionNoPre = "";
@@ -247,13 +212,13 @@ class TransactionUtils {
                             accountCode = content;
                         }
                         if (cIndex == 8) {
-                            sql += genTransactionAccountSql(finName, content, transCode, transactionNoPre, partnerCode, direction, accountCode, reqNo).concat("\n");
+                            sql += genTransactionAccountSql(finName, content, transCode, transactionNoPre, Constant.partnerCode, direction, accountCode, reqNo).concat("\n");
                         }
                     }
                     reqNo++;
                 }
                 if (sheetNo != 0) {
-                    resultSql = formatAndWriteSql(sql, resultSql, "03-transactionAccount");
+                    resultSql = ExcelUtilsHelps.formatAndWriteSql(sql, resultSql, "03-transactionAccount");
                     System.out.println(resultSql);
                 }
             }
@@ -267,19 +232,19 @@ class TransactionUtils {
      */
     private String genTransactionAccountSql(String finName, String content, String transCode, String transactionNoPre, String partnerCode, String direction, String accountCode, Integer reqNo) {
         String finCode = FinCode.getFinCodeByName(finName);
-        if(StringUtils.isEmpty(finCode)){
+        if (StringUtils.isEmpty(finCode)) {
             System.out.println(finName + " can not found relevant finCode!");
         }
         String transactionNo = transactionNoPre.concat(partnerCode).concat(transCode).concat(finCode);
         String amtCalType = "03";
         String isDefaultAccount = "Y";
         String summaryCode = "";
-        if (content.contains("THIRD")) {
+        if (content.contains(Constant.THIRD)) {
             amtCalType = "002";
-        } else if (content.contains("QY")) {
+        } else if (content.contains(Constant.QY)) {
             amtCalType = "001";
         }
-        if (content.contains("非代偿")) {
+        if (content.contains(Constant.NO_COMPENSATORY)) {
             isDefaultAccount = "N";
         }
 
@@ -291,45 +256,11 @@ class TransactionUtils {
             summaryCode = "TEMPLATE_002";
         }
         direction = Direction.getCodeByName(direction);
-//        System.out.println("transactionNo: " + transactionNo);
-//        System.out.println("direction: " + direction);
-//        System.out.println("accountCode: " + accountCode);
-//        System.out.println("amtCalType: " + amtCalType);
         String sql = "('" + transactionNo + "','" + String.valueOf(reqNo) + "','" + accountCode + "','"
                 + summaryCode + "','" + direction
                 + "','" + amtCalType + "','" + isDefaultAccount + "'),";
-//        System.out.println(sql);
         return sql;
     }
 
-    /**
-     * 写入文件
-     */
-    private void writeFile(String resultSql, String fileType) throws IOException {
-        File file;
-        FileWriter fileWriter = null;
-        BufferedWriter bufferWriter = null;
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-            String fileName = "D:/sql/".concat(fileType).concat(sdf.format(new Date())).concat(".sql");
-            file = new File(fileName);
-            if (!file.getParentFile().exists()) {
-                file.getParentFile().mkdir();
-            }
-            file.createNewFile();
-            fileWriter = new FileWriter(fileName, false);
-            bufferWriter = new BufferedWriter(fileWriter);
-            bufferWriter.write(resultSql);
-            bufferWriter.flush();
-            bufferWriter.close();
-            fileWriter.close();
 
-            System.out.println("write sql to file complete: " + fileName);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            bufferWriter.close();
-            fileWriter.close();
-        }
-    }
 }
