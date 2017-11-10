@@ -3,6 +3,8 @@ package com.yonon.demo.excel;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -15,7 +17,9 @@ import java.util.Date;
  */
 public class ExcelUtilsHelps {
     private static Workbook wb = null;
+    private static String fileSnapshot = "";
 
+    private static Logger logger = LoggerFactory.getLogger(ExcelUtilsHelps.class);
     /**
      * 获取wb对象
      *
@@ -24,7 +28,10 @@ public class ExcelUtilsHelps {
      */
     public static Workbook getWorkbook(String file) {
         try {
-            if (wb == null) {
+            if (wb == null || !file.equals(fileSnapshot)) {
+                // snapshot
+                logger.info("current file is:{},fileSnapshot is:{}",file,fileSnapshot);
+                fileSnapshot = file;
                 System.out.println("获取wb对象");
                 InputStream inputStream = new FileInputStream(file);
                 if (file.endsWith(Constant.FILETYPE_XLS)) {
