@@ -9,7 +9,7 @@ public class Constant {
     /**
      * third partner code
      * */
-    public static String partnerCode = "018";
+    public static String partnerCode = "001";
     /**
      *
      * */
@@ -30,4 +30,9 @@ public class Constant {
      * xlsx
      * */
     public static String FILETYPE_XLSX = "xlsx";
+
+    /**
+     * 工作簿数量
+     * */
+    public static Integer sheetNum = 1;
 }

@@ -65,7 +65,7 @@ public class AccountCodeUtils {
                             //获取科目枚举
                             String accountEnumCode = AccountCode.getCodeByName(baseCode);
                             if (StringUtils.isEmpty(accountEnumCode)) {
-                                System.out.println("can not get accountCode enum,baseCode: " + baseCode);
+                                logger.error("can not get accountCode enum,baseCode: {}" , baseCode);
                             } else {
                                 String[] codes = accountEnumCode.split("-");
                                 direction = codes[0];

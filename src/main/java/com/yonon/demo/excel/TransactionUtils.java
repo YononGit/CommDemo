@@ -6,6 +6,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.util.StringUtils;
 
+import static com.yonon.demo.excel.Constant.sheetNum;
+
 /**
  * Created by jr-jiangyinghan on 2017-10-10.
  *
@@ -29,7 +31,7 @@ class TransactionUtils {
         String resultSql = headSql.concat("INSERT INTO business_config(business_no,trans_code,NAME,partner_code,product_code) VALUES\n");
         try {
             wb = ExcelUtilsHelps.getWorkbook(file);
-            for (int sheetNo = 0; sheetNo <= 1; sheetNo++) {
+            for (int sheetNo = 0; sheetNo < sheetNum; sheetNo++) {
                 String produceCode = "";
                 if (sheetNo == 0) {
                     produceCode = "360JIETIAO_CASH";
@@ -59,7 +61,7 @@ class TransactionUtils {
                         continue;//如果有空，直接跳过本行，进入读取下一行数据
                     }
                 }
-                if (sheetNo != 0) {
+                if (sheetNo == sheetNum - 1) {
                     resultSql = ExcelUtilsHelps.formatAndWriteSql(sql, resultSql, "01-busConfig");
                     System.out.println(resultSql);
                 }
@@ -101,7 +103,7 @@ class TransactionUtils {
         String resultSql = headSql.concat("INSERT INTO transaction_config(transation_no,business_no,fin_code,fin_name,TYPE,fee_code,own_rate,partner_rate,xd_rate,use_rate,date_effective,date_invalid) VALUES\n");
         try {
             wb = ExcelUtilsHelps.getWorkbook(file);
-            for (int sheetNo = 0; sheetNo < 2; sheetNo++) {
+            for (int sheetNo = 0; sheetNo < sheetNum; sheetNo++) {
                 Sheet sheet = wb.getSheetAt(sheetNo); // 第一个工作表
                 String transactionNoPre = "";
                 if (sheetNo == 0) {
@@ -133,7 +135,7 @@ class TransactionUtils {
                         }
                     }
                 }
-                if (sheetNo != 0) {
+                if (sheetNo == sheetNum - 1) {
                     resultSql = ExcelUtilsHelps.formatAndWriteSql(sql, resultSql, "02-transactionConfig");
                     System.out.println(resultSql);
                 }
@@ -172,7 +174,7 @@ class TransactionUtils {
         String resultSql = headSql.concat("INSERT INTO transaction_account(transation_no,seq_no,account_code,summary_code,direction,amt_cal_type,is_default_account) VALUES\n");
         try {
             wb = ExcelUtilsHelps.getWorkbook(file);
-            for (int sheetNo = 0; sheetNo < 2; sheetNo++) {
+            for (int sheetNo = 0; sheetNo < sheetNum; sheetNo++) {
                 Sheet sheet = wb.getSheetAt(sheetNo); // 第一个工作表
                 String transactionNoPre = "";
                 if (sheetNo == 0) {
@@ -217,7 +219,7 @@ class TransactionUtils {
                     }
                     reqNo++;
                 }
-                if (sheetNo != 0) {
+                if (sheetNo == sheetNum - 1) {
                     resultSql = ExcelUtilsHelps.formatAndWriteSql(sql, resultSql, "03-transactionAccount");
                     System.out.println(resultSql);
                 }

@@ -15,6 +15,7 @@ public class ExcelMain {
      * 2-分配比例需要加THIRD\QY\ALL修饰
      * 3-文件存放目录D:\\tmp\\
      * 4-修改constant partnerCode
+     * 5-修改constant sheetNo 工作簿数量
      */
     public static void main(String[] args) throws Exception{
         readTransaction();
@@ -23,7 +24,7 @@ public class ExcelMain {
     }
     private static void readAccountCode(){
         try {
-            String file = "D:\\tmp\\018科目.xls";
+            String file = "D:\\tmp\\001科目.xls";
             AccountCodeUtils utils = new AccountCodeUtils();
             utils.readAccountCodeExcel(file);
             logger.info("main method run complete!");
@@ -34,7 +35,7 @@ public class ExcelMain {
     }
     private static void readTransaction(){
         try {
-            String file = "D:\\tmp\\018分录.xlsx";
+            String file = "D:\\tmp\\001分录.xlsx";
             TransactionUtils utils = new TransactionUtils();
             utils.readBusConfigExcel(file);
             utils.readTransactionConfigExcel(file);

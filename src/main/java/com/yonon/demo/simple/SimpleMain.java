@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Created by jr-jiangyinghan on 2017-7-3.
@@ -13,11 +14,8 @@ public class SimpleMain {
 
     private static final Logger logger = LoggerFactory.getLogger(SimpleMain.class);
 
-    public static void main(String[] args) throws Exception {
-
-        String start = "10:25:13";
-        String end = "10:27:00";
-        isRangeTime(start, end, new Date());
+    public static void main(String[] args) {
+        System.out.println(UUID.randomUUID().toString().replaceAll("-",""));
     }
 
     /**
@@ -28,6 +26,12 @@ public class SimpleMain {
      * @return true 为时间在指定范围内
      **/
     private static boolean isRangeTime(String start, String end, Date nowDate) {
+//        public static void main(String[] args) throws Exception {
+//
+//            String start = "10:25:13";
+//            String end = "10:27:00";
+//            isRangeTime(start, end, new Date());
+//        }
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
             String dateStr = sdf.format(nowDate);
