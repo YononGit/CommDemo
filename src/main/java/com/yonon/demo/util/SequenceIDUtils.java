@@ -47,4 +47,8 @@ public class SequenceIDUtils {
         }
         return 0;
     }
+
+    public static void main(String[] args) throws  Exception{
+        getID("HM",10000);
+    }
 }

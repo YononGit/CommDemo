@@ -21,7 +21,7 @@ public class Constant {
     /**
      *
      * */
-    public static String NO_COMPENSATORY = "非代偿";
+    public static String NO_COMPENSATORY = "NC";
     /**
      * xls
      * */

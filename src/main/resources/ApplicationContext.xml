@@ -11,6 +11,7 @@
 
     <!-- 自动扫描web包 ,将带有注解的类 纳入spring容器管理 -->
     <!--<context:component-scan base-package="com.eduoinfo.finances.bank.web"></context:component-scan>-->
+    <context:component-scan base-package="com.yonon.demo"></context:component-scan>
 
     <!-- 引入jdbc配置文件 -->
     <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -44,6 +45,14 @@
 
     <!-- 启用对事务注解的支持 -->
     <tx:annotation-driven transaction-manager="transactionManager"/>
-    <context:component-scan base-package="com.yonon.demo.dao"/>
+    <!-- 交易类型-->
+    <bean class="com.yonon.demo.design.account.common.service.impl.ACServiceImpl" id="ACService" />
+    <bean class="com.yonon.demo.design.account.common.service.impl.DBServiceImpl" id="DBService" />
+    <bean class="com.yonon.demo.design.account.common.service.impl.RPServiceImpl" id="RPService" />
+    <bean class="com.yonon.demo.design.account.common.service.impl.CPServiceImpl" id="CPService" />
+    <bean class="com.yonon.demo.design.account.common.service.impl.NACServiceImpl" id="NACService" />
 
+    <!--代偿-->
+    <bean class="com.yonon.demo.design.account.third.service.impl.JSCompensateServiceImpl" id="partnerCompensateService_JS" />
+    <bean class="com.yonon.demo.design.account.third.service.impl.XFXJCompensateServiceImpl" id="partnerCompensateService_XFXJ" />
 </beans>

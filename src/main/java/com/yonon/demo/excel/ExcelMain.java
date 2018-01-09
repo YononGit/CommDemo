@@ -16,6 +16,7 @@ public class ExcelMain {
      * 3-文件存放目录D:\\tmp\\
      * 4-修改constant partnerCode
      * 5-修改constant sheetNo 工作簿数量
+     * 6-修改文件非代偿为NC
      */
     public static void main(String[] args) throws Exception{
         readTransaction();
