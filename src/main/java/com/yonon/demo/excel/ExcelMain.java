@@ -11,12 +11,12 @@ public class ExcelMain {
     private static Logger logger = LoggerFactory.getLogger(ExcelMain.class);
     /***
      *
-     * 1-½»Ò×ÂëÐèÒªÔÚexcelÓÃ[]À¨Æð
-     * 2-·ÖÅä±ÈÀýÐèÒª¼ÓTHIRD\QY\ALLÐÞÊÎ
-     * 3-ÎÄ¼þ´æ·ÅÄ¿Â¼D:\\tmp\\
-     * 4-ÐÞ¸Äconstant partnerCode
-     * 5-ÐÞ¸Äconstant sheetNo ¹¤×÷²¾ÊýÁ¿
-     * 6-ÐÞ¸ÄÎÄ¼þ·Ç´ú³¥ÎªNC
+     * 1-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½excelï¿½ï¿½[]ï¿½ï¿½ï¿½ï¿½
+     * 2-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½THIRD\QY\ALLï¿½ï¿½ï¿½ï¿½
+     * 3-ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Ä¿Â¼D:\\tmp\\
+     * 4-ï¿½Þ¸ï¿½constant partnerCode
+     * 5-ï¿½Þ¸ï¿½constant sheetNo ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+     * 6-ï¿½Þ¸ï¿½ï¿½Ä¼ï¿½ï¿½Ç´ï¿½ï¿½ï¿½ÎªNC
      */
     public static void main(String[] args) throws Exception{
         readTransaction();
@@ -25,7 +25,7 @@ public class ExcelMain {
     }
     private static void readAccountCode(){
         try {
-            String file = "D:\\tmp\\001¿ÆÄ¿.xls";
+            String file = "D:\\tmp\\001ï¿½ï¿½Ä¿.xls";
             AccountCodeUtils utils = new AccountCodeUtils();
             utils.readAccountCodeExcel(file);
             logger.info("main method run complete!");
@@ -36,7 +36,7 @@ public class ExcelMain {
     }
     private static void readTransaction(){
         try {
-            String file = "D:\\tmp\\204·ÖÂ¼.xls";
+            String file = "D:\\tmp\\204ï¿½ï¿½Â¼.xls";
             TransactionUtils utils = new TransactionUtils();
             utils.readBusConfigExcel(file);
             utils.readTransactionConfigExcel(file);
@@ -52,6 +52,10 @@ public class ExcelMain {
     }
     //1.2.0
     public void method120(){
+
+    }
+    //1.3.0
+    public void method130(){
 
     }
 }
