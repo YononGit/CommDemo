@@ -30,4 +30,8 @@ enum Direction {
         }
         return null;
     }
+    //1.1.0
+    public void newAddFeature(){
+
+    }
 }
