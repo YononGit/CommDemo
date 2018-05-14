@@ -54,6 +54,10 @@ public class ExcelMain {
     public void method120(){
 
     }
+    //1.4.0
+    public void method140(){
+
+    }
 }
 
 
