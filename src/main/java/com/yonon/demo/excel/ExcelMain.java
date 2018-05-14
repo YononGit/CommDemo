@@ -46,7 +46,10 @@ public class ExcelMain {
             ex.printStackTrace();
         }
     }
+    //1.0.0
+    public void newAddFeature(){
 
+    }
 }
 
 
