@@ -4,8 +4,8 @@ package com.yonon.demo.excel;
  * Created by jr-jiangyinghan on 2017-10-9.
  */
 enum Direction {
-    D("D", "å€Ÿ"),
-    C("C", "è´·");
+    D("D", "½è"),
+    C("C", "´û");
     private String code;
     private String name;
 

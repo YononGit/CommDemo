@@ -1,72 +1,49 @@
 package com.yonon.demo.excel;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.util.StringUtils;
 
-import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import static com.yonon.demo.excel.Constant.sheetNum;
 
 /**
  * Created by jr-jiangyinghan on 2017-10-10.
- * <p>
- * 1-äº¤æ˜“ç éœ€è¦åœ¨excelç”¨[]æ‹¬èµ·
- * 2-åˆ†é…æ¯”ä¾‹éœ€è¦åŠ THIRDæˆ–è€…QYä¿®é¥°
- * 3-æ–‡ä»¶å­˜æ”¾ç›®å½•D:\\tmp\\
+ *
+ * 1-½»Ò×ÂëĞèÒªÔÚexcelÓÃ[]À¨Æğ
+ * 2-·ÖÅä±ÈÀıĞèÒª¼ÓTHIRD\QY\ALLĞŞÊÎ
+ * 3-ÎÄ¼ş´æ·ÅÄ¿Â¼D:\\tmp\\
+ * 4-ĞŞ¸Äconstant partnerCode
  */
 class TransactionUtils {
     private static Workbook wb = null;
 
-    private Workbook getWorkbook(String file) {
-        try {
-            if (wb == null) {
-                System.out.println("è·å–wbå¯¹è±¡");
-                InputStream inputStream = new FileInputStream(file);
-                if (file.endsWith("xls")) {
-                    wb = new HSSFWorkbook(inputStream); // è§£æxlsæ ¼å¼
-                } else if (file.endsWith("xlsx")) {
-                    wb = new XSSFWorkbook(inputStream); // è§£æxlsxæ ¼å¼
-                }
-                return wb;
-            } else {
-                System.out.println("è¿”å›wb");
-                return wb;
-            }
-        }catch(Exception ex){
-            ex.printStackTrace();
-            return wb;
-        }
-    }
-
-    private static final String partnerCode = "013";
-
     /**
-     * äº¤æ˜“æ ç›® éœ€è¦æ·»åŠ [] æ ‡å¿—
+     * ½»Ò×À¸Ä¿ ĞèÒªÌí¼Ó[] ±êÖ¾
      **/
     public void readBusConfigExcel(String file) throws Exception {
         Workbook wb;
         String sql = "";
-        String resultSql = "INSERT INTO business_config(business_no,trans_code,NAME,partner_code,product_code) VALUES\n";
+        String headSql = "-- ÒµÎñÅäÖÃ\n" +
+                "DELETE FROM business_config WHERE business_no LIKE 'b360JIETIAO_CASH" + Constant.partnerCode + "%';\n" +
+                "DELETE FROM business_config WHERE business_no LIKE 'b360JIETIAO_TERM" + Constant.partnerCode + "%';\n";
+        String resultSql = headSql.concat("INSERT INTO business_config(business_no,trans_code,NAME,partner_code,product_code) VALUES\n");
         try {
-            wb = getWorkbook(file);
-            for (int sheetNo = 0; sheetNo <= 1; sheetNo++) {
+            wb = ExcelUtilsHelps.getWorkbook(file);
+            for (int sheetNo = 0; sheetNo < sheetNum; sheetNo++) {
                 String produceCode = "";
                 if (sheetNo == 0) {
                     produceCode = "360JIETIAO_CASH";
                 } else if (sheetNo == 1) {
                     produceCode = "360JIETIAO_TERM";
                 }
-                Sheet sheet = wb.getSheetAt(sheetNo); // ç¬¬ä¸€ä¸ªå·¥ä½œè¡¨
+                Sheet sheet = wb.getSheetAt(sheetNo); // µÚÒ»¸ö¹¤×÷±í
 
-                int firstRowIndex = sheet.getFirstRowNum() + 1; // å¾—åˆ°ç¬¬ä¸€è¡Œçš„ä¸‹æ ‡ï¼Œæ­¤å¤„åŠ 2ç›®çš„æ˜¯ä¸ºäº†é¿å…è¯»å–æ´»åŠ¨é¦–è¡Œ
-                int lastRowIndex = sheet.getLastRowNum();       // å¾—åˆ°æœ€åä¸€è¡Œçš„ä¸‹æ ‡ ï¼Œä»–ä»¬ä¹‹å·®ä»£è¡¨æ€»è¡Œæ•°
+                int firstRowIndex = sheet.getFirstRowNum() + 1; // µÃµ½µÚÒ»ĞĞµÄÏÂ±ê£¬´Ë´¦¼Ó2Ä¿µÄÊÇÎªÁË±ÜÃâ¶ÁÈ¡»î¶¯Ê×ĞĞ
+                int lastRowIndex = sheet.getLastRowNum();       // µÃµ½×îºóÒ»ĞĞµÄÏÂ±ê £¬ËûÃÇÖ®²î´ú±í×ÜĞĞÊı
                 String snapShot = "snapShot";
-                // å¾ªç¯è¯»å–æ•°æ®
+                // Ñ­»·¶ÁÈ¡Êı¾İ
                 for (int rIndex = firstRowIndex; rIndex <= lastRowIndex; rIndex++) {
                     Row row = sheet.getRow(rIndex);
                     Cell cell = row.getCell(firstRowIndex - 1);
@@ -77,15 +54,15 @@ class TransactionUtils {
                         } else {
                             String transCode = getTransCodePrefix(cellStr);
                             String name = getNamePrefix(cellStr);
-                            sql += genBusConfigSql(transCode, name, produceCode, partnerCode).concat("\n");
+                            sql += genBusConfigSql(transCode, name, produceCode, Constant.partnerCode).concat("\n");
                             snapShot = cellStr;
                         }
                     } else {
-                        continue;//å¦‚æœæœ‰ç©ºï¼Œç›´æ¥è·³è¿‡æœ¬è¡Œï¼Œè¿›å…¥è¯»å–ä¸‹ä¸€è¡Œæ•°æ®
+                        continue;//Èç¹ûÓĞ¿Õ£¬Ö±½ÓÌø¹ı±¾ĞĞ£¬½øÈë¶ÁÈ¡ÏÂÒ»ĞĞÊı¾İ
                     }
                 }
-                if (sheetNo != 0) {
-                    resultSql = formatAndWriteSql(sql, resultSql, "01-busConfig");
+                if (sheetNo == sheetNum - 1) {
+                    resultSql = ExcelUtilsHelps.formatAndWriteSql(sql, resultSql, "01-busConfig");
                     System.out.println(resultSql);
                 }
             }
@@ -94,18 +71,7 @@ class TransactionUtils {
         }
     }
 
-    private String formatAndWriteSql(String sql, String resultSql, String fileType) {
-        int sqlCharCount = sql.length();
-        sql = sql.substring(0, sqlCharCount - 2);
-        sql = sql.concat(";");
-        resultSql = resultSql.concat(sql);
-        try {
-            writeFile(resultSql, fileType);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return resultSql;
-    }
+
 
     private String getTransCodePrefix(String content) {
         int beginIndex = content.indexOf("[");
@@ -131,11 +97,14 @@ class TransactionUtils {
     public void readTransactionConfigExcel(String file) throws Exception {
         Workbook wb;
         String sql = "";
-        String resultSql = "INSERT INTO transaction_config(transation_no,business_no,fin_code,fin_name,TYPE,fee_code,own_rate,partner_rate,xd_rate,use_rate,date_effective,date_invalid) VALUES\n";
+        String headSql = "-- ½»Ò×ÅäÖÃ\n" +
+                "DELETE FROM transaction_config WHERE transation_no LIKE '360JIETIAO_CASH" + Constant.partnerCode + "%';\n" +
+                "DELETE FROM transaction_config WHERE transation_no LIKE '360JIETIAO_TERM" + Constant.partnerCode + "%';\n";
+        String resultSql = headSql.concat("INSERT INTO transaction_config(transation_no,business_no,fin_code,fin_name,TYPE,fee_code,own_rate,partner_rate,xd_rate,use_rate,date_effective,date_invalid) VALUES\n");
         try {
-            wb = getWorkbook(file);
-            for (int sheetNo = 0; sheetNo < 2; sheetNo++) {
-                Sheet sheet = wb.getSheetAt(sheetNo); // ç¬¬ä¸€ä¸ªå·¥ä½œè¡¨
+            wb = ExcelUtilsHelps.getWorkbook(file);
+            for (int sheetNo = 0; sheetNo < sheetNum; sheetNo++) {
+                Sheet sheet = wb.getSheetAt(sheetNo); // µÚÒ»¸ö¹¤×÷±í
                 String transactionNoPre = "";
                 if (sheetNo == 0) {
                     transactionNoPre = "360JIETIAO_CASH";
@@ -143,15 +112,15 @@ class TransactionUtils {
                     transactionNoPre = "360JIETIAO_TERM";
                 }
 
-                int firstRowIndex = sheet.getFirstRowNum() + 1; // å¾—åˆ°ç¬¬ä¸€è¡Œçš„ä¸‹æ ‡ï¼Œæ­¤å¤„åŠ 2ç›®çš„æ˜¯ä¸ºäº†é¿å…è¯»å–æ´»åŠ¨é¦–è¡Œ
-                int lastRowIndex = sheet.getLastRowNum();       // å¾—åˆ°æœ€åä¸€è¡Œçš„ä¸‹æ ‡ ï¼Œä»–ä»¬ä¹‹å·®ä»£è¡¨æ€»è¡Œæ•°
+                int firstRowIndex = sheet.getFirstRowNum() + 1; // µÃµ½µÚÒ»ĞĞµÄÏÂ±ê£¬´Ë´¦¼Ó2Ä¿µÄÊÇÎªÁË±ÜÃâ¶ÁÈ¡»î¶¯Ê×ĞĞ
+                int lastRowIndex = sheet.getLastRowNum();       // µÃµ½×îºóÒ»ĞĞµÄÏÂ±ê £¬ËûÃÇÖ®²î´ú±í×ÜĞĞÊı
 
-                // å¾ªç¯è¯»å–æ•°æ®
+                // Ñ­»·¶ÁÈ¡Êı¾İ
                 String transCode = "";
                 for (int rIndex = firstRowIndex; rIndex <= lastRowIndex; rIndex++) {
                     Row row = sheet.getRow(rIndex);
-                    int firstCellIndex = row.getFirstCellNum();   // å¾—åˆ°ç¬¬ä¸€åˆ—
-//                    int lastCellIndex = row.getLastCellNum();   // å¾—åˆ°æœ€åä¸€åˆ—ï¼Œä»–ä»¬ä¹‹å·®æ˜¯æ€»åˆ—æ•°
+                    int firstCellIndex = row.getFirstCellNum();   // µÃµ½µÚÒ»ÁĞ
+//                    int lastCellIndex = row.getLastCellNum();   // µÃµ½×îºóÒ»ÁĞ£¬ËûÃÇÖ®²îÊÇ×ÜÁĞÊı
                     for (int cIndex = firstCellIndex; cIndex < 2; cIndex++) {
 //                        String finCode = "";
                         Cell cell = row.getCell(cIndex);
@@ -161,13 +130,13 @@ class TransactionUtils {
                             continue;
                         }
                         if (!StringUtils.isEmpty(content)) {
-                            sql += genTransactionConfigSql(content, transCode, partnerCode, transactionNoPre);
+                            sql += genTransactionConfigSql(content, transCode, Constant.partnerCode, transactionNoPre);
                             sql = sql.concat("\n");
                         }
                     }
                 }
-                if (sheetNo != 0) {
-                    resultSql = formatAndWriteSql(sql, resultSql, "02-transactionConfig");
+                if (sheetNo == sheetNum - 1) {
+                    resultSql = ExcelUtilsHelps.formatAndWriteSql(sql, resultSql, "02-transactionConfig");
                     System.out.println(resultSql);
                 }
             }
@@ -199,12 +168,14 @@ class TransactionUtils {
     public void readTransactionAccountExcel(String file) {
         Workbook wb;
         String sql = "";
-        String resultSql = "INSERT INTO transaction_account(transation_no,seq_no,account_code,summary_code,direction,amt_cal_type,is_default_account) VALUES\n";
+        String headSql = "-- ½»Ò×·ÖÂ¼\n" +
+                "DELETE FROM transaction_account WHERE transation_no LIKE '360JIETIAO_CASH" + Constant.partnerCode + "%';\n" +
+                "DELETE FROM transaction_account WHERE transation_no LIKE '360JIETIAO_TERM" + Constant.partnerCode + "%';\n";
+        String resultSql = headSql.concat("INSERT INTO transaction_account(transation_no,seq_no,account_code,summary_code,direction,amt_cal_type,is_default_account) VALUES\n");
         try {
-            wb = getWorkbook(file);
-            String partnerCode = "013";
-            for (int sheetNo = 0; sheetNo < 2; sheetNo++) {
-                Sheet sheet = wb.getSheetAt(sheetNo); // ç¬¬ä¸€ä¸ªå·¥ä½œè¡¨
+            wb = ExcelUtilsHelps.getWorkbook(file);
+            for (int sheetNo = 0; sheetNo < sheetNum; sheetNo++) {
+                Sheet sheet = wb.getSheetAt(sheetNo); // µÚÒ»¸ö¹¤×÷±í
                 String transactionNoPre = "";
                 if (sheetNo == 0) {
                     transactionNoPre = "360JIETIAO_CASH";
@@ -212,19 +183,19 @@ class TransactionUtils {
                     transactionNoPre = "360JIETIAO_TERM";
                 }
 
-                int firstRowIndex = sheet.getFirstRowNum() + 1; // å¾—åˆ°ç¬¬ä¸€è¡Œçš„ä¸‹æ ‡ï¼Œæ­¤å¤„åŠ 2ç›®çš„æ˜¯ä¸ºäº†é¿å…è¯»å–æ´»åŠ¨é¦–è¡Œ
-                int lastRowIndex = sheet.getLastRowNum();       // å¾—åˆ°æœ€åä¸€è¡Œçš„ä¸‹æ ‡ ï¼Œä»–ä»¬ä¹‹å·®ä»£è¡¨æ€»è¡Œæ•°
+                int firstRowIndex = sheet.getFirstRowNum() + 1; // µÃµ½µÚÒ»ĞĞµÄÏÂ±ê£¬´Ë´¦¼Ó2Ä¿µÄÊÇÎªÁË±ÜÃâ¶ÁÈ¡»î¶¯Ê×ĞĞ
+                int lastRowIndex = sheet.getLastRowNum();       // µÃµ½×îºóÒ»ĞĞµÄÏÂ±ê £¬ËûÃÇÖ®²î´ú±í×ÜĞĞÊı
 
                 Integer reqNo = 1;
-                // å¾ªç¯è¯»å–æ•°æ®
+                // Ñ­»·¶ÁÈ¡Êı¾İ
                 String transCode = "";
                 String finName = "";
                 String direction = "";
                 String accountCode = "";
                 for (int rIndex = firstRowIndex; rIndex <= lastRowIndex; rIndex++) {
                     Row row = sheet.getRow(rIndex);
-                    int firstCellIndex = row.getFirstCellNum();   // å¾—åˆ°ç¬¬ä¸€åˆ—
-//                    int lastCellIndex = row.getLastCellNum();   // å¾—åˆ°æœ€åä¸€åˆ—ï¼Œä»–ä»¬ä¹‹å·®æ˜¯æ€»åˆ—æ•°
+                    int firstCellIndex = row.getFirstCellNum();   // µÃµ½µÚÒ»ÁĞ
+//                    int lastCellIndex = row.getLastCellNum();   // µÃµ½×îºóÒ»ÁĞ£¬ËûÃÇÖ®²îÊÇ×ÜÁĞÊı
                     for (int cIndex = firstCellIndex; cIndex < 9; cIndex++) {
                         Cell cell = row.getCell(cIndex);
                         String content = cell.toString();
@@ -243,13 +214,13 @@ class TransactionUtils {
                             accountCode = content;
                         }
                         if (cIndex == 8) {
-                            sql += genTransactionAccountSql(finName, content, transCode, transactionNoPre, partnerCode, direction, accountCode, reqNo).concat("\n");
+                            sql += genTransactionAccountSql(finName, content, transCode, transactionNoPre, Constant.partnerCode, direction, accountCode, reqNo).concat("\n");
                         }
                     }
                     reqNo++;
                 }
-                if (sheetNo != 0) {
-                    resultSql = formatAndWriteSql(sql, resultSql, "03-transactionAccount");
+                if (sheetNo == sheetNum - 1) {
+                    resultSql = ExcelUtilsHelps.formatAndWriteSql(sql, resultSql, "03-transactionAccount");
                     System.out.println(resultSql);
                 }
             }
@@ -259,20 +230,23 @@ class TransactionUtils {
     }
 
     /**
-     * æ¯”ä¾‹åˆ†é…æ  éœ€è¦æ·»åŠ THIRD  å’Œ QYæ ‡å¿—
+     * ±ÈÀı·ÖÅäÀ¸ ĞèÒªÌí¼ÓTHIRD  ºÍ QY±êÖ¾
      */
     private String genTransactionAccountSql(String finName, String content, String transCode, String transactionNoPre, String partnerCode, String direction, String accountCode, Integer reqNo) {
         String finCode = FinCode.getFinCodeByName(finName);
+        if (StringUtils.isEmpty(finCode)) {
+            System.out.println(finName + " can not found relevant finCode!");
+        }
         String transactionNo = transactionNoPre.concat(partnerCode).concat(transCode).concat(finCode);
         String amtCalType = "03";
         String isDefaultAccount = "Y";
         String summaryCode = "";
-        if (content.contains("THIRD")) {
+        if (content.contains(Constant.THIRD)) {
             amtCalType = "002";
-        } else if (content.contains("QY")) {
+        } else if (content.contains(Constant.QY)) {
             amtCalType = "001";
         }
-        if (content.contains("éä»£å¿")) {
+        if (content.contains(Constant.NO_COMPENSATORY)) {
             isDefaultAccount = "N";
         }
 
@@ -284,45 +258,11 @@ class TransactionUtils {
             summaryCode = "TEMPLATE_002";
         }
         direction = Direction.getCodeByName(direction);
-//        System.out.println("transactionNo: " + transactionNo);
-//        System.out.println("direction: " + direction);
-//        System.out.println("accountCode: " + accountCode);
-//        System.out.println("amtCalType: " + amtCalType);
         String sql = "('" + transactionNo + "','" + String.valueOf(reqNo) + "','" + accountCode + "','"
                 + summaryCode + "','" + direction
                 + "','" + amtCalType + "','" + isDefaultAccount + "'),";
-//        System.out.println(sql);
         return sql;
     }
 
-    /**
-     * å†™å…¥æ–‡ä»¶
-     */
-    private void writeFile(String resultSql, String fileType) throws IOException {
-        File file;
-        FileWriter fileWriter = null;
-        BufferedWriter bufferWriter = null;
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-            String fileName = "D:/sql/".concat(fileType).concat(sdf.format(new Date())).concat(".sql");
-            file = new File(fileName);
-            if (!file.getParentFile().exists()) {
-                file.getParentFile().mkdir();
-            }
-            file.createNewFile();
-            fileWriter = new FileWriter(fileName, false);
-            bufferWriter = new BufferedWriter(fileWriter);
-            bufferWriter.write(resultSql);
-            bufferWriter.flush();
-            bufferWriter.close();
-            fileWriter.close();
 
-            System.out.println("write sql to file complete: " + fileName);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            bufferWriter.close();
-            fileWriter.close();
-        }
-    }
 }

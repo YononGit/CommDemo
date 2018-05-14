@@ -43,7 +43,7 @@ public class UserFaceTest {
                     boolean repeatResult = false;
                     boolean isRepeat = false;
                     while (!repeatResult) {
-                        if (repeatStr.equals("Y") || repeatStr.equals("y")) {
+                        if ("Y".equals(repeatStr) || repeatStr.equals("y")) {
                             isRepeat = true;
                             repeatResult = true;
                             System.out.println("input ");

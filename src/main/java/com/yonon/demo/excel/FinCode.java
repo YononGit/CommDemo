@@ -4,17 +4,17 @@ package com.yonon.demo.excel;
  * Created by jr-jiangyinghan on 2017-10-9.
  */
 enum FinCode {
-    PRINT("PRINT", "本金"),
-    PRINT_EXT("PRINT", "放款"),
-    FEE2("FEE2", "借款交易费"),
-    FEE3("FEE3", "还款交易费"),
-    FEE4("FEE4", "首贷佣金"),
-    FEE5("FEE5", "再贷佣金"),
-    FEE6("FEE6", "违约金"),
-    INT("INT", "利息"),
-    INT_EXT("INT", "分期手续费"),
-    OINT("OINT", "罚息"),
-    TRAN_DEDUCT("TRAN_DEDUCT", "利息券");
+    PRINT("PRINT", "����"),
+    PRINT_EXT("PRINT", "�ſ�"),
+    FEE2("FEE2", "���׷�"),
+    FEE3("FEE3", "����׷�"),
+    FEE4("FEE4", "�״�Ӷ��"),
+    FEE5("FEE5", "�ٴ�Ӷ��"),
+    FEE6("FEE6", "ΥԼ��"),
+    INT("INT", "��Ϣ"),
+    INT_EXT("INT", "����������"),
+    OINT("OINT", "��Ϣ"),
+    TRAN_DEDUCT("TRAN_DEDUCT", "��Ϣȯ");
 
     public String getFinCode() {
         return finCode;
