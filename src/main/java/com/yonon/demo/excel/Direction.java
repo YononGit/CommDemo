@@ -34,4 +34,9 @@ enum Direction {
     public void newAddFeature(){
 
     }
+
+    // 1.4.0
+    public void method140(){
+
+    }
 }
