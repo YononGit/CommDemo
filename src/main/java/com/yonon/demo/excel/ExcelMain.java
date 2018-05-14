@@ -50,6 +50,10 @@ public class ExcelMain {
     public void newAddFeature(){
         //
     }
+    //1.3.0
+    public void method130(){
+
+    }
 }
 
 
