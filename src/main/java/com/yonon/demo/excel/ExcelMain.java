@@ -58,6 +58,10 @@ public class ExcelMain {
     public void method130(){
 
     }
+    //1.4.0
+    public void method140(){
+
+    }
 }
 
 
