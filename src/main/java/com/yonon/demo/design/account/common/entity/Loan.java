@@ -9,11 +9,21 @@ public class Loan {
     private String id;
     private String third;
     private String name;
+    private String rpyType;
 
-    public Loan(String id, String third, String name) {
+    public Loan(String id, String third, String name, String rpyType) {
         this.id = id;
         this.third = third;
         this.name = name;
+        this.rpyType = rpyType;
+    }
+
+    public String getRpyType() {
+        return rpyType;
+    }
+
+    public void setRpyType(String rpyType) {
+        this.rpyType = rpyType;
     }
 
     public String getThird() {

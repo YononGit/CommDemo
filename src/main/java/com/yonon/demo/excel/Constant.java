@@ -9,7 +9,7 @@ public class Constant {
     /**
      * third partner code
      * */
-    public static String partnerCode = "001";
+    public static String partnerCode = "204";
     /**
      *
      * */

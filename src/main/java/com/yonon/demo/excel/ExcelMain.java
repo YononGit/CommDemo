@@ -36,7 +36,7 @@ public class ExcelMain {
     }
     private static void readTransaction(){
         try {
-            String file = "D:\\tmp\\001·ÖÂ¼.xlsx";
+            String file = "D:\\tmp\\204·ÖÂ¼.xls";
             TransactionUtils utils = new TransactionUtils();
             utils.readBusConfigExcel(file);
             utils.readTransactionConfigExcel(file);

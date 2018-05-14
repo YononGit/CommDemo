@@ -45,14 +45,8 @@
 
     <!-- 启用对事务注解的支持 -->
     <tx:annotation-driven transaction-manager="transactionManager"/>
-    <!-- 交易类型-->
-    <bean class="com.yonon.demo.design.account.common.service.impl.ACServiceImpl" id="ACService" />
-    <bean class="com.yonon.demo.design.account.common.service.impl.DBServiceImpl" id="DBService" />
-    <bean class="com.yonon.demo.design.account.common.service.impl.RPServiceImpl" id="RPService" />
-    <bean class="com.yonon.demo.design.account.common.service.impl.CPServiceImpl" id="CPService" />
-    <bean class="com.yonon.demo.design.account.common.service.impl.NACServiceImpl" id="NACService" />
 
-    <!--代偿-->
-    <bean class="com.yonon.demo.design.account.third.service.impl.JSCompensateServiceImpl" id="partnerCompensateService_JS" />
-    <bean class="com.yonon.demo.design.account.third.service.impl.XFXJCompensateServiceImpl" id="partnerCompensateService_XFXJ" />
+    <!-- 资金方 -->
+    <bean class="com.yonon.demo.design.partner.impl.XFXJAccountServiceImpl" id="XFXJAccountService" />
+    <bean class="com.yonon.demo.design.partner.impl.JSAccountServiceImpl" id="JSAccountService" />
 </beans>
